@@ -1,5 +1,6 @@
 const predictClassification = require('../services/inferenceService');
 const storeData = require('../services/storeData');
+const getHistories = require('../services/getHistories');
 const crypto = require('crypto');
 
 const postPredictHandler = async (request, h) => {
@@ -60,4 +61,26 @@ const postPredictHandler = async (request, h) => {
   }
 };
 
-module.exports = postPredictHandler;
+const getHistoriesHandler = async (request, h) => {
+  try {
+    const histories = await getHistories();
+    const response = h.response({
+      status: 'success',
+      data: histories
+    });
+    response.code(200);
+    return response;
+  } catch (error) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Terjadi kesalahan dalam mengambil data riwayat prediksi'
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {
+  postPredictHandler,
+  getHistoriesHandler
+};
